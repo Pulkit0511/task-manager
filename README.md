@@ -35,7 +35,7 @@ A full-stack task management application built with **React, Express, Prisma, an
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/task-manager.git
+git clone https://github.com/Pulkit0511/task-manager.git
 cd task-manager
 ```
 
@@ -49,8 +49,8 @@ npm install
 Create `.env` file in `server/`
 
 ```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/taskmanager?schema=public"
-JWT_SECRET="super-secret-change-me"
+DATABASE_URL="DATABASE_KEY"
+JWT_SECRET="JWT_SECRET"
 PORT=4000
 CLIENT_ORIGIN=http://localhost:5173
 ```
