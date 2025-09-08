@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+  --color-background: #f9fafb;
+  --color-foreground: #111827;
+  --color-card: #ffffff;
+  --color-card-foreground: #111827;
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #ffffff;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: sans-serif;
+}
+
+@layer utilities {
+  .bg-card {
+    background-color: var(--color-card);
+  }
+  .text-card-foreground {
+    color: var(--color-card-foreground);
+  }
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
+  .text-primary-foreground {
+    color: var(--color-primary-foreground);
+  }
+}
