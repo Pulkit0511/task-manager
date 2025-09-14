@@ -3,7 +3,7 @@ import TaskCard from "./TaskCard";
 
 const columns = ["Todo", "In Progress", "Done"];
 
-export default function TaskBoard({ tasks, setTasks }) {
+export default function TaskBoard({ tasks, setTasks, onEdit, onDelete }) {
   const handleDragEnd = (result) => {
     const { destination, source } = result;
     if (!destination) return;
@@ -62,22 +62,26 @@ export default function TaskBoard({ tasks, setTasks }) {
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        {columns.map((status) => (
-          <Droppable key={status} droppableId={status}>
-            {(provided) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 shadow-md min-h-[300px] border border-gray-200 dark:border-gray-700"
-              >
-                <h2 className="text-lg font-semibold mb-4 px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 sticky top-0 z-10">
-                  {status}
-                </h2>
-                <div className="flex flex-col gap-4">
-                  {tasks
-                    .filter((task) => task.status === status)
-                    .sort((a, b) => a.order - b.order)
-                    .map((task, index) => (
+        {columns.map((status) => {
+          const statusTasks = tasks
+            .filter((task) => task.status === status)
+            .sort((a, b) => a.order - b.order);
+
+          if (statusTasks.length === 0) return null;
+
+          return (
+            <Droppable key={status} droppableId={status}>
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 shadow-md min-h-[300px] border border-gray-200 dark:border-gray-700"
+                >
+                  <h2 className="text-lg font-semibold mb-4 px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 sticky top-0 z-10">
+                    {status}
+                  </h2>
+                  <div className="flex flex-col gap-4">
+                    {statusTasks.map((task, index) => (
                       <Draggable
                         key={task.id}
                         draggableId={String(task.id)}
@@ -90,20 +94,21 @@ export default function TaskBoard({ tasks, setTasks }) {
                             {...provided.dragHandleProps}
                           >
                             <TaskCard
-                              title={task.title}
-                              description={task.description}
-                              status={task.status}
+                              task={task}
+                              onEdit={onEdit}
+                              onDelete={() => onDelete(task.id)}
                             />
                           </div>
                         )}
                       </Draggable>
                     ))}
-                  {provided.placeholder}
+                    {provided.placeholder}
+                  </div>
                 </div>
-              </div>
-            )}
-          </Droppable>
-        ))}
+              )}
+            </Droppable>
+          );
+        })}
       </div>
     </DragDropContext>
   );

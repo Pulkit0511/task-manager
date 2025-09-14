@@ -28,6 +28,18 @@ export default function App() {
   ]);
 
   const addTask = (task) => setTasks([task, ...tasks]);
+  const deleteTask = (id) => {
+    setTasks((prev) => {
+      const next = prev.filter((t) => String(t.id) !== String(id));
+      return next;
+    });
+  };
+
+  const editTask = (updatedTask) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -35,7 +47,12 @@ export default function App() {
       <div className="flex justify-center mb-6">
         <TaskForm onAdd={addTask} />
       </div>
-      <TaskBoard tasks={tasks} setTasks={setTasks} />
+      <TaskBoard
+        tasks={tasks}
+        setTasks={setTasks}
+        onEdit={editTask}
+        onDelete={deleteTask}
+      />
     </div>
   );
 }
