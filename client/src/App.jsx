@@ -1,43 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import TaskBoard from "./components/TaskBoard";
 import TaskForm from "./components/TaskForm";
+import {
+  getTasks,
+  createTask,
+  updateTask,
+  deleteTask as removeTask,
+} from "./services/taskService";
 
 export default function App() {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Setup DB",
-      description: "Configure PostgreSQL in Docker",
-      status: "In Progress",
-      order: 0,
-    },
-    {
-      id: 2,
-      title: "Create UI",
-      description: "Build Task Manager UI with Tailwind & shadcn/ui",
-      status: "Todo",
-      order: 0,
-    },
-    {
-      id: 3,
-      title: "Test Backend",
-      description: "Ensure APIs are working",
-      status: "Done",
-      order: 0,
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
+  const navigate = useNavigate();
 
-  const addTask = (task) => setTasks([task, ...tasks]);
-  const deleteTask = (id) => {
-    setTasks((prev) => {
-      const next = prev.filter((t) => String(t.id) !== String(id));
-      return next;
-    });
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    const fetchTasks = async () => {
+      try {
+        const data = await getTasks();
+        setTasks(data);
+      } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+  const addTask = async (task) => {
+    const newTask = await createTask(task);
+    setTasks((prev) => [newTask, ...prev]);
   };
 
-  const editTask = (updatedTask) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+  const deleteTask = async (id) => {
+    await removeTask(id);
+    setTasks((prev) => prev.filter((t) => String(t.id) !== String(id)));
+  };
+
+  const editTask = async (updatedTask) => {
+    const updated = await updateTask(updatedTask.id, updatedTask);
+    setTasks((prev) =>
+      prev.map((task) => (task.id === updated.id ? updated : task))
     );
   };
 

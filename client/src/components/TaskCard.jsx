@@ -16,11 +16,12 @@ import { MoreVertical } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { statusLabels } from "@/utils/status";
 
 const statusVariants = {
-  Todo: "bg-blue-100 text-blue-800",
-  "In Progress": "bg-yellow-100 text-yellow-800",
-  Done: "bg-green-100 text-green-800",
+  TODO: "bg-blue-100 text-blue-800",
+  IN_PROGRESS: "bg-yellow-100 text-yellow-800",
+  DONE: "bg-green-100 text-green-800",
 };
 
 export default function TaskCard({ task, onEdit, onDelete }) {
@@ -80,6 +81,26 @@ export default function TaskCard({ task, onEdit, onDelete }) {
               placeholder="Task description"
               rows={3}
             />
+            <Input
+              type="date"
+              value={
+                editedTask.dueDate
+                  ? new Date(editedTask.dueDate).toISOString().split("T")[0]
+                  : ""
+              }
+              onChange={(e) =>
+                setEditedTask({ ...editedTask, dueDate: e.target.value })
+              }
+            />
+
+            <Input
+              type="text"
+              value={editedTask.category || ""}
+              onChange={(e) =>
+                setEditedTask({ ...editedTask, category: e.target.value })
+              }
+              placeholder="Category (e.g. Work, Personal)"
+            />
             <div className="flex gap-2">
               <Button size="sm" onClick={handleSave}>
                 Save
@@ -97,14 +118,27 @@ export default function TaskCard({ task, onEdit, onDelete }) {
       </CardHeader>
 
       {!isEditing && (
-        <CardContent>
+        <CardContent className="space-y-2">
           <Badge
             className={`mt-2 text-xs font-medium px-3 py-1 rounded-full ${
               statusVariants[task.status] || "bg-gray-100 text-gray-800"
             }`}
           >
-            {task.status}
+            {statusLabels[task.status]}
           </Badge>
+
+          {task.dueDate && (
+            <p className="text-sm text-gray-600">
+              <span className="font-medium">Due:</span>{" "}
+              {new Date(task.dueDate).toLocaleDateString()}
+            </p>
+          )}
+
+          {task.category && (
+            <Badge className="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">
+              {task.category}
+            </Badge>
+          )}
         </CardContent>
       )}
     </Card>

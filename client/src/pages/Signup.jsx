@@ -1,34 +1,69 @@
 import { useState } from "react";
-import { TextField, Button, Container, Typography } from "@mui/material";
+import { useNavigate, Link } from "react-router-dom";
+import { signup } from "../services/authService";
+import AuthLayout from "@/components/AuthLayout";
 
-function SignupPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function Signup() {
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSignup = (e) => {
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup with:", email, password);
-    // TODO: Call backend API
+    try {
+      await signup(form.email, form.password);
+      navigate("/");
+    } catch (err) {
+      setError(err.response?.data?.error || "Signup failed");
+    }
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 10 }}>
-      <Typography variant="h4" gutterBottom>Signup</Typography>
-      <form onSubmit={handleSignup}>
-        <TextField 
-          label="Email" fullWidth margin="normal" 
-          value={email} onChange={(e) => setEmail(e.target.value)} 
+    <AuthLayout
+      title="Signup"
+      footer={
+        <p>
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-500 hover:underline">
+            Login
+          </Link>
+        </p>
+      }
+    >
+      {error && (
+        <p className="mb-3 text-sm text-red-500 text-center">{error}</p>
+      )}
+
+      <form onSubmit={handleSubmit}>
+        <input
+          className="w-full p-2 border rounded mb-3"
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
         />
-        <TextField 
-          label="Password" type="password" fullWidth margin="normal" 
-          value={password} onChange={(e) => setPassword(e.target.value)} 
+        <input
+          className="w-full p-2 border rounded mb-3"
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
         />
-        <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
+        <button
+          type="submit"
+          className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
           Signup
-        </Button>
+        </button>
       </form>
-    </Container>
+    </AuthLayout>
   );
 }
-
-export default SignupPage;

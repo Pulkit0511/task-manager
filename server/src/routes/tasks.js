@@ -1,16 +1,27 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
 import { requireAuth } from "../middleware/auth.js";
+import { STATUS } from "../utils/status.js";
 
 const router = Router();
 
 router.use(requireAuth);
 
+const normalizeStatus = (status) => {
+  if (!status) return undefined;
+  return Object.values(STATUS).includes(status) ? status : undefined;
+};
+
 // GET /tasks
 router.get("/", async (req, res) => {
   const { status, category } = req.query;
   const where = { userId: req.user.id };
-  if (status) where.status = status;
+
+  if (status) {
+    const normalized = normalizeStatus(status);
+    if (normalized) where.status = normalized;
+  }
+
   if (category) where.category = category;
 
   const tasks = await prisma.task.findMany({
@@ -31,6 +42,7 @@ router.post("/", async (req, res) => {
       description: description || null,
       dueDate: dueDate ? new Date(dueDate) : null,
       category: category || null,
+      status: normalizeStatus(req.body.status) || "TODO",
       userId: req.user.id,
     },
   });
@@ -60,7 +72,7 @@ router.put("/:id", async (req, res) => {
           ? new Date(dueDate)
           : null,
       category: category === undefined ? existing.category : category,
-      status: status ?? existing.status,
+      status: normalizeStatus(status) ?? existing.status,
     },
   });
   res.json(updated);

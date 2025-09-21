@@ -1,7 +1,9 @@
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import TaskCard from "./TaskCard";
+import api from "@/services/api";
+import { StatusEnum, statusLabels } from "@/utils/status";
 
-const columns = ["Todo", "In Progress", "Done"];
+const columns = ["TODO", "IN_PROGRESS", "DONE"];
 
 export default function TaskBoard({ tasks, setTasks, onEdit, onDelete }) {
   const handleDragEnd = (result) => {
@@ -21,7 +23,7 @@ export default function TaskBoard({ tasks, setTasks, onEdit, onDelete }) {
     // Get all tasks for the source column
     const sourceTasks = updatedTasks
       .filter((t) => t.status === source.droppableId)
-      .sort((a, b) => a.order - b.order);
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
     // Remove the dragged task
     const [movedTask] = sourceTasks.splice(source.index, 1);
@@ -57,6 +59,12 @@ export default function TaskBoard({ tasks, setTasks, onEdit, onDelete }) {
     });
 
     setTasks(finalTasks);
+
+    // Persist moved task to backend
+    api.put(`/tasks/${movedTask.id}`, {
+      status: movedTask.status,
+      order: movedTask.order,
+    });
   };
 
   return (
@@ -65,7 +73,7 @@ export default function TaskBoard({ tasks, setTasks, onEdit, onDelete }) {
         {columns.map((status) => {
           const statusTasks = tasks
             .filter((task) => task.status === status)
-            .sort((a, b) => a.order - b.order);
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
           if (statusTasks.length === 0) return null;
 
@@ -78,7 +86,7 @@ export default function TaskBoard({ tasks, setTasks, onEdit, onDelete }) {
                   className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 shadow-md min-h-[300px] border border-gray-200 dark:border-gray-700"
                 >
                   <h2 className="text-lg font-semibold mb-4 px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 sticky top-0 z-10">
-                    {status}
+                    {statusLabels[status]}
                   </h2>
                   <div className="flex flex-col gap-4">
                     {statusTasks.map((task, index) => (
