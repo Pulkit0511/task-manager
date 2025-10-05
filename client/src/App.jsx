@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import TaskBoard from "./components/TaskBoard";
 import TaskForm from "./components/TaskForm";
+import Navbar from "./components/Navbar";
 import {
   getTasks,
   createTask,
@@ -11,6 +12,10 @@ import {
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
+  const [user, setUser] = useState(null);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,6 +23,11 @@ export default function App() {
     if (!token) {
       navigate("/login");
       return;
+    }
+
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
 
     const fetchTasks = async () => {
@@ -30,7 +40,19 @@ export default function App() {
     };
 
     fetchTasks();
-  }, []);
+  }, [navigate]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY) setShowNavbar(false);
+      else setShowNavbar(true);
+
+      setLastScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const addTask = async (task) => {
     const newTask = await createTask(task);
@@ -50,8 +72,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">Task Manager</h1>
+    <div className="min-h-screen bg-[#222831] text-[#EEEEEE] p-6 pt-20">
+      <Navbar user={user} visible={showNavbar} />
       <div className="flex justify-center mb-6">
         <TaskForm onAdd={addTask} />
       </div>

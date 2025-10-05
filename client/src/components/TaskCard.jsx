@@ -19,9 +19,9 @@ import { Button } from "@/components/ui/button";
 import { statusLabels } from "@/utils/status";
 
 const statusVariants = {
-  TODO: "bg-blue-100 text-blue-800",
-  IN_PROGRESS: "bg-yellow-100 text-yellow-800",
-  DONE: "bg-green-100 text-green-800",
+  TODO: "bg-[#00ADB5] text-[#222831]",
+  IN_PROGRESS: "bg-[#EEEEEE] text-[#222831]",
+  DONE: "bg-[#222831] text-[#EEEEEE]",
 };
 
 export default function TaskCard({ task, onEdit, onDelete }) {
@@ -33,26 +33,26 @@ export default function TaskCard({ task, onEdit, onDelete }) {
     setIsEditing(false);
   };
   return (
-    <Card className="mb-2 shadow-sm hover:shadow-md transition-shadow border border-gray-200 bg-white cursor-grab active:cursor-grabbing">
+    <Card className="mb-2 shadow-sm hover:shadow-md transition-shadow border border-[#393E46] bg-[#393E46] text-[#EEEEEE] cursor-grab active:cursor-grabbing rounded-xl">
       <CardHeader className="space-y-1 flex flex-row items-start justify-between">
         {!isEditing ? (
           <>
             <div>
-              <CardTitle className="text-base font-semibold text-gray-900">
+              <CardTitle className="text-base font-semibold text-[#EEEEEE]">
                 {task.title}
               </CardTitle>
-              <CardDescription className="text-sm text-gray-500 italic mt-1 line-clamp-2">
+              <CardDescription className="text-sm text-[#00ADB5] italic mt-1 line-clamp-2">
                 {task.description}
               </CardDescription>
             </div>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="p-1 hover:bg-gray-100 rounded">
-                  <MoreVertical className="h-4 w-4 text-gray-600" />
+                <button className="p-1 hover:bg-[#222831] rounded">
+                  <MoreVertical className="h-4 w-4 text-[#EEEEEE]" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-white border border-gray-200">
+              <DropdownMenuContent className="bg-[#393E46] border border-[#222831] text-[#EEEEEE]">
                 <DropdownMenuItem onClick={() => setIsEditing(true)}>
                   Edit
                 </DropdownMenuItem>
@@ -65,7 +65,7 @@ export default function TaskCard({ task, onEdit, onDelete }) {
         ) : (
           <div className="w-full flex flex-col gap-2">
             <Input
-              className="font-semibold text-lg"
+              className="bg-[#222831] text-[#EEEEEE] border border-[#00ADB5] focus:ring-[#00ADB5]"
               value={editedTask.title}
               onChange={(e) =>
                 setEditedTask({ ...editedTask, title: e.target.value })
@@ -73,7 +73,7 @@ export default function TaskCard({ task, onEdit, onDelete }) {
               placeholder="Task title"
             />
             <textarea
-              className="text-sm text-gray-600 border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="bg-[#222831] text-[#EEEEEE] border border-[#00ADB5] rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#00ADB5]"
               value={editedTask.description}
               onChange={(e) =>
                 setEditedTask({ ...editedTask, description: e.target.value })
@@ -82,6 +82,7 @@ export default function TaskCard({ task, onEdit, onDelete }) {
               rows={3}
             />
             <Input
+              className="bg-[#222831] text-[#EEEEEE] border border-[#00ADB5] focus:ring-[#00ADB5]"
               type="date"
               value={
                 editedTask.dueDate
@@ -94,6 +95,7 @@ export default function TaskCard({ task, onEdit, onDelete }) {
             />
 
             <Input
+              className="bg-[#222831] text-[#EEEEEE] border border-[#00ADB5] focus:ring-[#00ADB5]"
               type="text"
               value={editedTask.category || ""}
               onChange={(e) =>
@@ -102,12 +104,17 @@ export default function TaskCard({ task, onEdit, onDelete }) {
               placeholder="Category (e.g. Work, Personal)"
             />
             <div className="flex gap-2">
-              <Button size="sm" onClick={handleSave}>
+              <Button
+                size="sm"
+                className="bg-[#00ADB5] text-[#222831] hover:bg-opacity-80"
+                onClick={handleSave}
+              >
                 Save
               </Button>
               <Button
                 size="sm"
                 variant="outline"
+                className="border border-[#00ADB5] text-[#00ADB5]"
                 onClick={() => setIsEditing(false)}
               >
                 Cancel
@@ -128,14 +135,14 @@ export default function TaskCard({ task, onEdit, onDelete }) {
           </Badge>
 
           {task.dueDate && (
-            <p className="text-sm text-gray-600">
-              <span className="font-medium">Due:</span>{" "}
+            <p className="text-sm text-[#EEEEEE]">
+              <span className="font-medium text-[#00ADB5]">Due:</span>{" "}
               {new Date(task.dueDate).toLocaleDateString()}
             </p>
           )}
 
           {task.category && (
-            <Badge className="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-1 rounded">
+            <Badge className="bg-[#00ADB5] text-[#222831] text-xs font-medium px-2 py-1 rounded">
               {task.category}
             </Badge>
           )}

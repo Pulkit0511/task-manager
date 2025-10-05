@@ -69,7 +69,10 @@ export default function TaskBoard({ tasks, setTasks, onEdit, onDelete }) {
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+      <div
+        className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-start p-4"
+        style={{ backgroundColor: "#222831", borderRadius: "12px" }}
+      >
         {columns.map((status) => {
           const statusTasks = tasks
             .filter((task) => task.status === status)
@@ -83,9 +86,9 @@ export default function TaskBoard({ tasks, setTasks, onEdit, onDelete }) {
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 shadow-md min-h-[300px] border border-gray-200 dark:border-gray-700"
+                  className="bg-[#393E46] rounded-xl p-4 shadow-md min-h-[300px] border border-[#222831]"
                 >
-                  <h2 className="text-lg font-semibold mb-4 px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100 sticky top-0 z-10">
+                  <h2 className="text-lg font-semibold mb-4 px-2 py-1 rounded-md bg-[#222831] text-[#EEEEEE] sticky top-0 z-10">
                     {statusLabels[status]}
                   </h2>
                   <div className="flex flex-col gap-4">
